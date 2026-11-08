@@ -8,6 +8,7 @@ sys.path.append(
 )
 
 from data_generator.generate_csv import *
+
 from processing.loader import load_csv
 from processing.transformations import (
     flag_large_transactions
@@ -15,7 +16,9 @@ from processing.transformations import (
 
 from database.database import (
     create_tables,
-    insert_transactions
+    insert_transactions,
+    is_file_processed,
+    mark_file_processed
 )
 
 
@@ -23,27 +26,39 @@ def run():
 
     print("Etape 1 : génération des CSV")
 
-    # le simple import a déjà généré les CSV
-
-    print("Etape 2 : création de la base")
-
     create_tables()
 
-    print("Etape 3 : chargement du csv")
+    files = os.listdir("storage/incoming")
 
-    df = load_csv(
-        "storage/incoming/transactions_01.csv"
-    )
+    for file_name in files:
 
-    print("Etape 4 : transformations")
+        if not file_name.endswith(".csv"):
+            continue
 
-    df = flag_large_transactions(df)
+        print(f"\nTraitement de {file_name}")
 
-    print("Etape 5 : insertion")
+        if is_file_processed(file_name):
 
-    insert_transactions(df)
+            print(
+                f"{file_name} déjà traité - ignoré"
+            )
 
-    print("Pipeline terminée")
+            continue
+
+        file_path = os.path.join(
+            "storage/incoming",
+            file_name
+        )
+
+        df = load_csv(file_path)
+
+        df = flag_large_transactions(df)
+
+        insert_transactions(df)
+
+        mark_file_processed(file_name)
+
+    print("\nPipeline terminée")
 
 
 if __name__ == "__main__":

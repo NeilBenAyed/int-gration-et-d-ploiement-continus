@@ -65,7 +65,7 @@ def create_tables():
     )
     """)
 
-    # Fichiers déjà traités
+    # Historique des fichiers déjà traités
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS processed_files (
@@ -116,3 +116,44 @@ def insert_transactions(df):
     conn.close()
 
     print("Transactions insérées")
+
+
+def is_file_processed(filename):
+
+    conn = create_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT filename
+    FROM processed_files
+    WHERE filename = ?
+    """, (filename,))
+
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result is not None
+
+
+def mark_file_processed(filename):
+
+    conn = create_connection()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO processed_files(filename)
+    VALUES(?)
+    """, (filename,))
+
+    conn.commit()
+
+    conn.close()
+
+    print(f"Fichier marqué comme traité : {filename}")
+    
+def get_connection():
+
+    return create_connection()
