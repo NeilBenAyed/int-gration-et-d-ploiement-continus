@@ -1,0 +1,3 @@
+transaction_datetime,amount,iban_origin,country_origin,bank_origin,iban_dest,country_dest
+2026-01-02 10:00:00,3000,FR761111111111,FR,BNP,FR762222222222,FR
+2026-01-02 11:00:00,1500,FR764444444444,FR,SG,FR765555555555,ES

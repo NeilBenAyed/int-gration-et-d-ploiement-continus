@@ -1,0 +1,16 @@
+services:
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs
+
+    command: server -s3
+
+    ports:
+      - "8333:8333"
+      - "9333:9333"
+
+    volumes:
+      - seaweed_data:/data
+
+volumes:
+  seaweed_data:
