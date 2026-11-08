@@ -157,3 +157,72 @@ def mark_file_processed(filename):
 def get_connection():
 
     return create_connection()
+def insert_iban_sent(df):
+
+    conn = create_connection()
+
+    cursor = conn.cursor()
+
+    for _, row in df.iterrows():
+
+        cursor.execute("""
+        INSERT OR REPLACE INTO iban_sent(
+            iban_origin,
+            total_sent
+        )
+        VALUES (?, ?)
+        """, (
+            row["iban_origin"],
+            row["amount"]
+        ))
+
+    conn.commit()
+    conn.close()
+
+    print("Agrégat iban_sent inséré")
+def insert_bank_sent(df):
+
+    conn = create_connection()
+
+    cursor = conn.cursor()
+
+    for _, row in df.iterrows():
+
+        cursor.execute("""
+        INSERT OR REPLACE INTO bank_sent(
+            bank_origin,
+            total_sent
+        )
+        VALUES (?, ?)
+        """, (
+            row["bank_origin"],
+            row["amount"]
+        ))
+
+    conn.commit()
+    conn.close()
+
+    print("Agrégat bank_sent inséré")
+def insert_iban_received(df):
+
+    conn = create_connection()
+
+    cursor = conn.cursor()
+
+    for _, row in df.iterrows():
+
+        cursor.execute("""
+        INSERT OR REPLACE INTO iban_received(
+            iban_dest,
+            total_received
+        )
+        VALUES (?, ?)
+        """, (
+            row["iban_dest"],
+            row["amount"]
+        ))
+
+    conn.commit()
+    conn.close()
+
+    print("Agrégat iban_received inséré")
